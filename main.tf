@@ -1,10 +1,10 @@
 provider "aws" {
  region = "us-east-1" 
- access_key = "AKIA5AP4BMLKH5QSQWN6"
- secret_key = "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"
+# access_key = "" applied my key here
+# secret_key = ""
 }
 
-# 1. Create vpc
+
 
  resource "aws_vpc" "prod-vpc" {
    cidr_block = "10.0.0.0/16"
@@ -13,14 +13,14 @@ provider "aws" {
    }
  }
 
-# # 2. Create Internet Gateway
+
 
  resource "aws_internet_gateway" "gw" {
    vpc_id = aws_vpc.prod-vpc.id
 
 
  }
-# # 3. Create Custom Route Table
+
 
  resource "aws_route_table" "prod-route-table" {
    vpc_id = aws_vpc.prod-vpc.id
@@ -40,7 +40,7 @@ provider "aws" {
    }
  }
 
- # 4. Create a Subnet 
+  
 
  resource "aws_subnet" "subnet-1" {
    vpc_id            = aws_vpc.prod-vpc.id
@@ -52,12 +52,12 @@ provider "aws" {
    }
  }
 
-# # 5. Associate subnet with Route Table
+
  resource "aws_route_table_association" "a" {
    subnet_id      = aws_subnet.subnet-1.id
    route_table_id = aws_route_table.prod-route-table.id
  }
-# # 6. Create Security Group to allow port 22,80,443
+
  resource "aws_security_group" "allow_web" {
    name        = "allow_web_traffic"
    description = "Allow Web inbound traffic"
@@ -97,7 +97,7 @@ provider "aws" {
    }
  }
 
-# # 7. Create a network interface with an ip in the subnet that was created in step 4
+
 
  resource "aws_network_interface" "web-server-nic" {
    subnet_id       = aws_subnet.subnet-1.id
@@ -105,7 +105,7 @@ provider "aws" {
    security_groups = [aws_security_group.allow_web.id]
 
  }
-# # 8. Assign an elastic IP to the network interface created in step 7
+
 
  resource "aws_eip" "one" {
    vpc                       = true
@@ -118,7 +118,7 @@ provider "aws" {
    value = aws_eip.one.public_ip
  }
 
-# # 9. Create Ubuntu server and install/enable apache2
+
 
  resource "aws_instance" "web-server-instance" {
    ami               = "ami-052efd3df9dad4825"
